@@ -16,16 +16,5 @@ router.post("/course", (request, response) => {
   response.json(request.body)
 })
 
-router.get('/', (request, response) => {
-  courseTemplateCopy.find({ })
-    .then((data)  =>{
-      console.log('Data: ', data);
-      response.json(data);
-    })
-    .catch((error) => {
-      console.log('error');
-    });
-});
-
 router.get("/signin")
 module.exports = router

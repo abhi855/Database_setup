@@ -20,8 +20,19 @@ const courseTemplate = new mongoose.Schema({
   minute: {
     type: String,
     required: true,
-  }
-
+  },
+  //   date: {
+  //     type: Date,
+  //     default: Date.now,
+  //   },
+  //   rating: {
+  //     type: Number,
+  //     default: 0,
+  //   },
+  //   numberofenroll: {
+  //     type: Number,
+  //     default: 0,
+  //   },
 })
 
-module.exports = mongoose.model("abhiTable", courseTemplate)
+module.exports = mongoose.model("mytable", courseTemplate)

@@ -1,107 +1,140 @@
 import "./App.css"
 import axios from "axios"
 import React, { Component } from "react"
+import Display from "./components/Display"
 
 class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      title: "",
-      description: "",
-      startDate: "",
-      hours: "",
-      minute: "",
-    }
-    this.changeDate = this.changeDate.bind(this)
-    this.changeDescription = this.changeDescription.bind(this)
-    this.changeHours = this.changeHours.bind(this)
-    this.changeMinute = this.changeMinute.bind(this)
-    this.changeTitle = this.changeTitle.bind(this)
-    this.createCourse = this.createCourse.bind(this)
+
+  state = {
+    title: "",
+    description: "",
+    startDate: "",
+    hours: "",
+    minute: "",
+    posts: []
   }
-  changeDate(event) {
-    this.setState({
-      startDate: event.target.value,
-    })
-  }
-  changeMinute(event) {
-    this.setState({
-      minute: event.target.value,
-    })
-  }
-  changeHours(event) {
-    this.setState({
-      hours: event.target.value,
-    })
-  }
-  changeDescription(event) {
-    this.setState({
-      description: event.target.value,
-    })
-  }
-  changeTitle(event) {
-    this.setState({
-      title: event.target.value,
-    })
-  }
-  async createCourse(event) {
-    event.preventDefault()
-    //fetch('http://localhost:4000/api/register')
-    const course = {
+
+  componentDidMount =() =>{
+    this.getCourses();
+  };
+
+  handleChange = ({ target }) => {
+    const { name, value } = target;
+    this.setState({ [name]: value });
+  };
+
+  createCourse = (event) => {
+    event.preventDefault();
+
+    const courseRegistered = {
       title: this.state.title,
-      startDate: this.state.startDate,
       description: this.state.description,
+      startDate: this.state.startDate,
       hours: this.state.hours,
-      minute: this.state.minute,
-    }
+      minute: this.state.minute
+    };
+
+    axios.post('http://localhost:4000/app/course', courseRegistered)
+    .then(response => console.log(response.data))
+
+    this.resetUserInputs();
+    
+  };
+
+  resetUserInputs = () => {
+    this.setState({
+      title: '',
+      description: '',
+      startDate: '',
+      hours: '',
+      minute: ''
+    });
+  };
+
+  getCourses = () =>{
+    axios.get('http://localhost:4000/app/')
+    .then((response) => {
+      const data = response.data;
+      this.setState({ posts: data });
+      console.log('Data has been received!!!');
+    })
   }
+
+  displayBlogPost = (posts) => {
+
+    if (!posts.length) return null;
+
+
+    return posts.map((post, index) => (
+      <div key={index} className="blog-post__display">
+        <h3>{post.title}</h3>
+        <p>{post.body}</p>
+      </div>
+    ));
+  };
+
+
   render() {
     return (
-      <div>
-        <h1>Create Course</h1>
-        <form onSubmit={this.createCourse}>
-          <input
-            value={this.state.title}
-            onChange={this.changeTitle}
-            type="text"
-            placeholder="Title"
-          />
-          <br />
-          <input
-            value={this.state.description}
-            onChange={this.changeDescription}
-            type="text"
-            placeholder="Description"
-          />
-          <br />
-          <input
-            value={this.state.startDate}
-            onChange={this.changeDate}
-            type="text"
-            placeholder="Start Date"
-          />
-          <br />
-          <input
-            value={this.state.hours}
-            onChange={this.changeHours}
-            type="text"
-            placeholder="Hours"
-          />
-          <br />
-          <input
-            value={this.state.minute}
-            onChange={this.changeMinute}
-            type="text"
-            placeholder="Minute"
-          />
-          <br />
-          <input
-            type="submit"
-            className="btn btn-success btn-block"
-            value="Submit"
-          />
-        </form>
-      </div>
+      <>
+        <div className="container">
+        <div>
+          <h1>Create Course</h1>
+          <form onSubmit={this.createCourse}>
+              <input
+                name="title"
+                value={this.state.title}
+                onChange={this.handleChange}
+                type="text"
+                placeholder="Title"
+              />
+              <br />
+              <input
+                name="description"
+                value={this.state.description}
+                onChange={this.handleChange}
+                type="text"
+                placeholder="Description"
+              />
+              <br />
+              <input
+                name="startDate"
+                value={this.state.startDate}
+                onChange={this.handleChange}
+                type="text"
+                placeholder="Start Date"
+              />
+              <br />
+              <input
+                name="hours"
+                value={this.state.hours}
+                onChange={this.handleChange}
+                type="text"
+                placeholder="Hours"
+              />
+              <br />
+              <input
+                name="minute"
+                value={this.state.minute}
+                onChange={this.handleChange}
+                type="text"
+                placeholder="Minute"
+              />
+              <br />
+              <input
+                type="submit"
+                className="btn btn-success btn-block"
+                value="Submit"
+              />
+            </form>
+          </div>
+            <div className="course-post">
+              {this.displayBlogPost(this.state.posts)}
+            </div>
+
+          <Display />
+        </div>
+      </>
     )
   }
 }
@@ -155,6 +188,6 @@ class App extends Component {
 //       </form>
 //     </div>
 //   )
-// }
+//}
 
 export default App
